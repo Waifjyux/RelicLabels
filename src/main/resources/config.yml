@@ -1,0 +1,33 @@
+# The base Unicode address from which all following Unicode values will be generated.
+# Do not change this value unless you know exactly what you're doing.
+# After changing this value, regenerate the resource pack using /reliclabels compile
+baseUnicode: 0xF000
+
+# The total number of generated Unicode values depends on the number of defined tiers.
+# Calculation: 4 + (12 * number of tiers)
+
+# Should Relic Labels be updated when used in enchanting specific blocks?
+# If enabled, labels will update when clicked in an Anvil, Enchanting Table, or Grindstone.
+# Disable for better performance.
+updateOnEnchant: true
+
+# Should Relic Labels be updated when picking up an item?
+# If enabled, the label will update when the item is collected.
+# Disable for better performance.
+updateOnPickup: true
+
+# Should Relic Labels be updated when a player joins the server?
+# If enabled, labels will be refreshed for the player upon joining.
+# Disable for better performance.
+updateOnJoin: true
+
+# Should Relic Labels be updated when the plugin starts?
+# If enabled, labels will be refreshed for all players upon server startup or reload.
+# Disable for better performance.
+updateOnStartup: true
+
+# Should Relic Labels use the experimental chat distribution method?
+# The new chat distribution method detects and processes hex color codes but may have some issues with the line distribution.
+# The older method is more stable but cannot handle hex color codes.
+experimentalChatDistribution: true
+

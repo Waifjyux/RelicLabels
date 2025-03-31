@@ -1,0 +1,12 @@
+name: RelicLabels
+version: '1.0.0'
+main: de.waifjyux.relicLabels.RelicLabels
+author: Waifjyux
+api-version: '1.18'
+
+commands:
+  reliclabels:
+    description: Command for configuring the plugin
+    permission: reliclabels.command
+    aliases:
+    - rls
