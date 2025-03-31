@@ -14,18 +14,23 @@ import java.util.List;
 
 public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
 
+    // Prefix for messages
     private static String pre = "§8[§3RL§8]§7 ";
 
+    // Method to handle commands
     @Override
     public boolean onCommand(CommandSender p, Command command, String s, String[] args) {
 
+        // Check if the sender has permission to execute the command
         if(!p.hasPermission("reliclabels.command")) {
             p.sendMessage(pre + "§cYou do not have permission to execute this command!");
             return false;
         }
 
+        // Handling different subcommands
         if(args.length >= 1) {
 
+            // List available relic tiers
             if(args[0].equalsIgnoreCase("listtiers")) {
                 p.sendMessage(pre + "§7Available Relic Tiers:");
                 for(RelicTier tier : RelicTier.getTiers()) {
@@ -33,16 +38,19 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
+            // Add a new relic tier
             else if(args[0].equalsIgnoreCase("addtier")) {
                 if(args.length == 3) {
                     String name = args[1];
                     String hexColor = args[2];
 
+                    // Check if the tier already exists
                     if(RelicTier.getTier(name) != null) {
                         p.sendMessage(pre + "§cA tier with this name already exists!");
                         return false;
                     }
 
+                    // Add the new tier and save the configuration
                     RelicTier.addTier(new RelicTier(name, hexColor));
                     RelicTier.saveConfig();
                     p.sendMessage(pre + "Successfully added tier!");
@@ -51,10 +59,12 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
+            // Remove an existing relic tier
             else if(args[0].equalsIgnoreCase("removetier")) {
                 if(args.length == 2) {
                     String name = args[1];
 
+                    // Get the tier and remove it
                     RelicTier tier = RelicTier.getTier(name);
                     if(tier == null) {
                         p.sendMessage(pre + "§cA tier with this name does not exist!");
@@ -69,6 +79,7 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
+            // Compile the resource pack
             else if(args[0].equalsIgnoreCase("compile")) {
                 p.sendMessage(pre + "§7Compiling the resource pack...");
                 long startTime = System.nanoTime();
@@ -83,18 +94,21 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                 p.sendMessage(pre + String.format("§aSuccessfully compiled in %.3fs", duration));
             }
 
+            // Modify or view information about a tier
             else if(args[0].equalsIgnoreCase("tier")) {
                 if(args.length == 4) {
                     String name = args[1];
                     String property = args[2];
                     String value = args[3];
 
+                    // Get the tier and modify it
                     RelicTier tier = RelicTier.getTier(name);
                     if(tier == null) {
                         p.sendMessage(pre + "§cA tier with this name does not exist!");
                         return false;
                     }
 
+                    // Modify the tier's name or color
                     if(property.equalsIgnoreCase("setname")) {
                         tier.setName(value);
                         RelicTier.saveConfig();
@@ -108,10 +122,12 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                     }
                 }
 
+                // Display tier information
                 else if(args.length == 3) {
                     String name = args[1];
                     String property = args[2];
 
+                    // Show tier info if requested
                     if(!property.equalsIgnoreCase("info")) {
                         p.sendMessage(pre + "Usage: /reliclabels tier <name> [setname/setcolor] [value]");
                         p.sendMessage(pre + "Usage: /reliclabels tier <name> info");
@@ -124,6 +140,7 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                         return false;
                     }
 
+                    // Print tier info
                     p.sendMessage(pre + "§7Tier Information: " + tier.getName());
                     p.sendMessage(" §7- " + ChatColor.of(tier.getPrimaryColor()) + "Color: " + tier.getHexColor());
                     p.sendMessage(" §7- " + ChatColor.of(tier.getSecondaryColor()) + "Secondary Color");
@@ -134,32 +151,40 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
+            // Handle unknown subcommands
             else {
                 p.sendMessage(pre + "§cUnknown subcommand!");
             }
 
-        }else p.sendMessage(pre + "§cUsage: /reliclabels <subcommand>");
+        } else {
+            p.sendMessage(pre + "§cUsage: /reliclabels <subcommand>");
+        }
 
         return false;
     }
 
+    // Method to handle tab completion for commands
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
 
+        // Provide tab completion for the first argument
         if(args.length == 1) {
             return List.of("listtiers", "addtier", "removetier", "compile", "tier");
-        }else if(args.length == 2) {
+        }
+        // Provide tab completion for second argument if it's a tier-related command
+        else if(args.length == 2) {
             if(args[0].equalsIgnoreCase("tier")) {
                 return RelicTier.getTiers().stream().map(RelicTier::getName).toList();
-            }else if(args[0].equalsIgnoreCase("removetier")) {
+            } else if(args[0].equalsIgnoreCase("removetier")) {
                 return RelicTier.getTiers().stream().map(RelicTier::getName).toList();
             }
-        }else if(args.length == 3) {
+        }
+        // Provide tab completion for third argument if it's a tier modification command
+        else if(args.length == 3) {
             if(args[0].equalsIgnoreCase("tier")) {
                 return List.of("setname", "setcolor", "info");
             }
         }
-
 
         return List.of();
     }
