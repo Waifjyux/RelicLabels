@@ -59,6 +59,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/Waifjyux/RelicLabels</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -81,6 +85,5 @@
             <url>https://maven.pkg.github.com/Waifjyux/RelicLabels</url>
         </repository>
     </distributionManagement>
-
 
 </project>
