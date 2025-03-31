@@ -8,7 +8,7 @@ Add the following dependency to your `pom.xml` to use Relic Labels in your proje
 <dependency>
   <groupId>io.github.waifjyux</groupId>
   <artifactId>reliclabels</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 ⠀
