@@ -84,6 +84,11 @@
             <id>github</id>
             <url>https://maven.pkg.github.com/Waifjyux/RelicLabels</url>
         </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/Waifjyux/RelicLabels</url>
+        </snapshotRepository>
     </distributionManagement>
+
 
 </project>
