@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class RelicTemplate {
 
@@ -24,7 +25,7 @@ public class RelicTemplate {
     private String labelDescription;
     private int labelWidth;
     private RelicTier tier;
-    private List<String> content;
+    private List<String> content = new ArrayList<>();
 
     // Constructor with parameters for material, label name, description, width, and tier
     public RelicTemplate(Material material, String labelName, String labelDescription, int labelWidth, RelicTier tier) {
@@ -104,6 +105,11 @@ public class RelicTemplate {
     // Getter for content
     public List<String> getContent() {
         return this.content;
+    }
+
+    // Setter for material
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     // Setter for item name
@@ -215,6 +221,27 @@ public class RelicTemplate {
         return formattedName.toString().trim();
     }
 
+    // Method to get itemstack preview
+    public ItemStack getPreview() {
+        ItemStack stack = new ItemStack(this.material);
+        ItemMeta meta = stack.getItemMeta();
+
+        if(customModelData != -1) {
+            meta.setCustomModelData(customModelData);
+        }
+
+        if(itemName != null) {
+            meta.setDisplayName(itemName);
+        }
+
+        stack.setItemMeta(meta);
+
+        generateLabel(stack).generate(stack);
+
+        return stack;
+    }
+
+
     // Method to add a template to the list of templates
     public static void addTemplate(RelicTemplate template) {
         templates.add(template);
@@ -223,6 +250,11 @@ public class RelicTemplate {
     // Method to remove a template from the list
     public static void removeTemplate(RelicTemplate template) {
         templates.remove(template);
+    }
+
+    // Method to get a list of all templates
+    public static ArrayList<RelicTemplate> getTemplates() {
+        return templates;
     }
 
     // Method to get a template for a given item stack
@@ -308,4 +340,63 @@ public class RelicTemplate {
 
         Bukkit.getLogger().info("Loaded " + loaded + " relic templates");
     }
+
+    // Saves the templates configuration to templates.yml
+    public static void saveConfig() {
+        // Get the configuration file in the plugin's data folder
+        File file = new File(RelicLabels.getPlugin().getDataFolder(), "templates.yml");
+
+        // Create a new YamlConfiguration object
+        YamlConfiguration cfg = new YamlConfiguration();
+
+        // Create a list to store each template as a map of values
+        List<Object> templatesList = new ArrayList<>();
+
+        // Loop through each template in the static templates list
+        for (RelicTemplate template : templates) {
+            // Create a map to hold the template values
+            java.util.Map<String, Object> map = new java.util.HashMap<>();
+
+            // Always include these keys
+            map.put("material", template.getMaterial().toString());
+            map.put("tier", template.getTier().getName());
+            map.put("labelName", template.getLabelName());
+            map.put("labelDescription", template.getLabelDescription());
+            map.put("labelWidth", template.getLabelWidth());
+            map.put("content", template.getContent());
+
+            // Only include 'itemName' if it is not null
+            if (template.getItemName() != null) {
+                map.put("itemName", template.getItemName());
+            }
+
+            // Only include 'customModelData' if it is not the default value (-1)
+            if (template.getCustomModelData() != -1) {
+                map.put("customModelData", template.getCustomModelData());
+            }
+
+            // Add the map to the list of templates
+            templatesList.add(map);
+        }
+
+        // Set the templates list in the configuration
+        cfg.set("templates", templatesList);
+
+        try {
+            // Ensure the parent directory exists
+            if (!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
+
+            // Create the file if it doesn't exist
+            if (!file.exists())
+                file.createNewFile();
+
+            // Save the configuration to the file
+            cfg.save(file);
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("Could not save templates.yml: " + e.getMessage());
+        }
+    }
+
+
 }

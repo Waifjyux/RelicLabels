@@ -171,7 +171,7 @@ public class ResourcePackCompiler {
     // Zips the resource pack into a .zip file
     private static void zipPack() throws IOException {
         File packFolder = new File(RelicLabels.getPlugin().getDataFolder(), "resourcepack");
-        File zipFile = new File(RelicLabels.getPlugin().getDataFolder(), "RelicLabels-v1.0.1.zip");
+        File zipFile = new File(RelicLabels.getPlugin().getDataFolder(), "RelicLabels-v1.0.2.zip");
 
         // Delete the existing zip file if it exists
         if (zipFile.exists()) zipFile.delete();

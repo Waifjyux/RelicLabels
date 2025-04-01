@@ -55,6 +55,7 @@ public final class RelicLabels extends JavaPlugin {
     @Override
     public void onDisable() {
         RelicTier.saveConfig();
+        RelicTemplate.saveConfig();
         Bukkit.getLogger().info("RelicLabels disabled!");
     }
 
