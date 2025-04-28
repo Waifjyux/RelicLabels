@@ -2,6 +2,7 @@ package de.waifjyux.relicLabels.commands;
 
 import de.waifjyux.relicLabels.labels.RelicTemplate;
 import de.waifjyux.relicLabels.labels.RelicTier;
+import de.waifjyux.relicLabels.util.ItemsAdderIntegration;
 import de.waifjyux.relicLabels.util.ResourcePackCompiler;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IllegalFormatCodePointException;
 import java.util.List;
@@ -93,7 +95,9 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(pre + "§7Compiling the resource pack...");
                 long startTime = System.nanoTime();
                 try {
-                    ResourcePackCompiler.compile();
+                    if(ItemsAdderIntegration.isItemsAdderEnabled()) {
+                        ItemsAdderIntegration.compile();
+                    }else ResourcePackCompiler.compile();
                 } catch (Exception e) {
                     e.printStackTrace();
                     sender.sendMessage(pre + "§cAn error occurred while compiling the resource pack!");
@@ -210,7 +214,7 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
             else if (args[0].equalsIgnoreCase("removetemplate")) {
                 if (args.length == 2) {
                     int index = Integer.parseInt(args[1]);
-                    RelicTemplate template = RelicTemplate.getTemplates().get(index);
+                    RelicTemplate template = RelicTemplate.getTemplates().get(index + 1);
 
                     if (template == null) {
                         sender.sendMessage(pre + "§cInvalid index!");
@@ -450,40 +454,50 @@ public class RelicLabelsCommand implements CommandExecutor, TabCompleter {
 
         // Provide tab completion for the first argument
         if(args.length == 1) {
-            return List.of("listtiers", "addtier", "removetier", "compile", "tier", "listtemplates", "addtemplate", "removetemplate", "template");
+            return filterCompletion(args[0], List.of("listtiers", "addtier", "removetier", "compile", "tier", "listtemplates", "addtemplate", "removetemplate", "template"));
         }
         // Provide tab completion for second argument if it's a tier-related command
         else if(args.length == 2) {
             if(args[0].equalsIgnoreCase("tier")) {
-                return RelicTier.getTiers().stream().map(RelicTier::getName).toList();
+                return filterCompletion(args[1], RelicTier.getTiers().stream().map(RelicTier::getName).toList());
             } else if(args[0].equalsIgnoreCase("removetier")) {
-                return RelicTier.getTiers().stream().map(RelicTier::getName).toList();
+                return filterCompletion(args[1], RelicTier.getTiers().stream().map(RelicTier::getName).toList());
             } else if(args[0].equalsIgnoreCase("addtemplate")) {
-                return Arrays.stream(Material.values()).toList().stream().map(Enum::name).toList();
+                return filterCompletion(args[1], Arrays.stream(Material.values()).toList().stream().map(Enum::name).toList());
             }
         }
         // Provide tab completion for third argument if it's a tier modification command
         else if(args.length == 3) {
             if(args[0].equalsIgnoreCase("tier")) {
-                return List.of("setname", "setcolor", "info");
+                return filterCompletion(args[2], List.of("setname", "setcolor", "info"));
             }else if(args[0].equalsIgnoreCase("template")) {
-                return List.of("setmaterial", "settier", "setwidth", "setcustommodeldata", "setitemname", "setlabelname", "setlabeldescription", "info");
+                return filterCompletion(args[2], List.of("setmaterial", "settier", "setwidth", "setcustommodeldata", "setitemname", "setlabelname", "setlabeldescription", "info"));
             }else if(args[0].equalsIgnoreCase("addtemplate")) {
-                return RelicTier.getTiers().stream().map(RelicTier::getName).toList();
+                return filterCompletion(args[2], RelicTier.getTiers().stream().map(RelicTier::getName).toList());
             }
         }
 
         else if(args.length == 4) {
             if(args[0].equalsIgnoreCase("template")) {
                 if(args[2].equalsIgnoreCase("setmaterial")) {
-                    return Arrays.stream(Material.values()).toList().stream().map(Enum::name).toList();
+                    return filterCompletion(args[3], Arrays.stream(Material.values()).toList().stream().map(Enum::name).toList());
                 }else if(args[2].equalsIgnoreCase("settier")) {
-                    return RelicTier.getTiers().stream().map(RelicTier::getName).toList();
+                    return filterCompletion(args[3], RelicTier.getTiers().stream().map(RelicTier::getName).toList());
                 }
             }
         }
 
         return List.of();
+    }
+
+    private List<String> filterCompletion(String arg, List<String> list) {
+        List<String> filteredList = new ArrayList<>();
+        for(String item : list) {
+            if (item.toLowerCase().startsWith(arg.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        return filteredList;
     }
 
     private void printTemplateInformation(CommandSender sender, RelicTemplate template) {
