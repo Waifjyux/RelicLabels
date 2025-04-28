@@ -45,6 +45,11 @@ player.getInventory().addItem(item);
 ## Compiling the Resource Pack
 To compile the resource pack:
 ```java
+// Compile the resource pack to the plugin folder as .zip
 // Throws IOException
 ResourcePackCompiler.compile();
+
+// Add all resources to ItemsAdder
+// Throws IOException
+ItemsAdderIntegration.compile();
 ```
